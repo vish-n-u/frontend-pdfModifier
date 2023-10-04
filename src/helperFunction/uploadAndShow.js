@@ -5,31 +5,19 @@ GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${versi
 let user = JSON.parse(localStorage.getItem("user"))
 
 
-async function loadPDF (selectedFile,setUri,setPdf,setTotalPages,setPdfPages,setLoading,showLogin,) {
+async function loadPDFAndRenderOnScreen (selectedFile,setUri,setPdf,setTotalPages,setPdfPages,setLoading,showLogin,) {
     try {
       if (selectedFile) {
         setLoading(true); // Show loading message
-        console.log("selected file",selectedFile)
        if(!user&&showLogin) {document.getElementById("userExist").click()
       }
        // Create a FormData object and append the PDF file to it
-        const formData = new FormData();
-        formData.append('pdfFile', selectedFile ); // 'pd
-        if (formData.has('pdfFile')) {
-          console.log('pdfFile is present in formData');
-        }
-      await  fetch('http://localhost:5000/uploadPDF', {
-          method: 'POST',
-          body: formData,
-        })
+       
         const uri = await URL.createObjectURL(selectedFile)
-        console.log("uri",uri)
         setUri(uri)
         const pdfData = await PDFJS.getDocument({url:uri});
         const pdfDoc = await pdfData.promise.then((pdf) => pdf);
-        // console.log("pdfDoc", pdfDoc,numPages)
           setPdf(pdfDoc);
-        console.log("pdfDox",pdfDoc)
         // Get the total number of pages in the PDF
         setTotalPages(pdfDoc.numPages);
   
@@ -61,5 +49,5 @@ async function loadPDF (selectedFile,setUri,setPdf,setTotalPages,setPdfPages,set
 
 
 
-  export default loadPDF  
+  export default loadPDFAndRenderOnScreen  
 

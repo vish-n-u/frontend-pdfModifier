@@ -16,7 +16,6 @@ async function downloadPDF(selectedPage,Toast,uri){
       })
     return
     }
-      // console.log('Creating PDF',arrayBuffer)
       selectedPage.sort((a,b)=>a-b)
       
       // Load the original PDF document
@@ -38,14 +37,12 @@ async function downloadPDF(selectedPage,Toast,uri){
     
       // Serialize the new PDF to a buffer
       const newPdfBuffer = await newPdfDoc.save();
-      console.log(newPdfBuffer)
     
       // Write the new PDF buffer to a new file or perform further actions
       // fs.writeFileSync('path-to-new-pdf.pdf', newPdfBuffer);
       const blob = new Blob([newPdfBuffer], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
     
-      console.log('New PDF created successfully.');
       const a = document.createElement('a');
       a.href = url;
       a.download = 'new_pdf.pdf'; // Specify the desired filename

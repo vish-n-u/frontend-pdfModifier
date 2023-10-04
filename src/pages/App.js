@@ -7,18 +7,22 @@ import {
   Input,
   IconButton,
   useDisclosure,
+  Spinner,
 } from '@chakra-ui/react';
+import {  Button, Checkbox, Image,useToast } from '@chakra-ui/react'
 import { FaFilePdf } from 'react-icons/fa';
-import {GlobalWorkerOptions,getDocument,version} from 'pdfjs-dist';
-import { PDFDocument } from 'pdf-lib';
-import downloadPDF from './helperFunction/downLoad';
-import loadPDF from './helperFunction/uploadAndShow';
-import { AlertDialog, AlertDialogBody, AlertDialogCloseButton, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Button, Checkbox, CheckboxGroup,Image,useToast } from '@chakra-ui/react'
+import {GlobalWorkerOptions,version} from 'pdfjs-dist';
+import { useNavigate } from 'react-router-dom';
 
-let user = JSON.parse(localStorage.getItem("user"))
-// import { Checkbox } from '@chakra-ui/react/dist';
-const PDFJS = window.pdfjsLib;
+import downloadPDF from '../helperFunction/downLoad';
+import loadPDFAndRenderOnScreen from '../helperFunction/uploadAndShow';
+import DrawerExample from '../components/drawer';
+import ShowLoginMessage from '../components/showLoginMsg';
+import handleSelectedPages from '../helperFunction/handleSelectedPages';
+
 GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.js`;
+
+
 
 const PdfUploaderAndViewer = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -31,87 +35,105 @@ const PdfUploaderAndViewer = () => {
   const [uri,setUri] = useState('');
   const Toast = useToast()
   const [showLogin,setShowLogin] = useState(true)
+  const [selectedSavedPdf,setSelectedSavedPdf] = useState('')
+  const [isFromBackend,setIsFromBackend] = useState(false)
+  const navigate = useNavigate()
 
-  useEffect(()=>{ async function fetchData(){
-    const data = await fetch("http://localhost:5000/getFile",{
+  useEffect(()=>{ async function getUsersSinglePdf(){
+    
+    if(!selectedSavedPdf)return 
+    setLoading(true)
+    const data = await fetch("http://localhost:5000/pdfModifier/api/v1/pdf/"+selectedSavedPdf,{ 
       mode:"cors",
-      responseType: 'arraybuffer',
+      credentials:"include",
     })
+    setSelectedFile("")
+    setIsFromBackend(true) // set to true to ensure doesnt conflict with uploads
     const pdfArrayBuffer = await data.arrayBuffer()    
-    console.log(data,pdfArrayBuffer)
-    const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' });
+    const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' })
+      await  loadPDFAndRenderOnScreen(pdfBlob,setUri,setPdf,setTotalPages,setPdfPages,setLoading,showLogin,setShowLogin)
 
-// Create a URL for the Blob
-await  loadPDF(pdfBlob,setUri,setPdf,setTotalPages,setPdfPages,setLoading,showLogin,setShowLogin)
-  }  
-  fetchData()
-  },[])
+  }
+  getUsersSinglePdf()
+  },[selectedSavedPdf])
   
 
   useEffect(() => {
     const load = async () => {
       try {
         if (selectedFile) {
-          setLoading(true); // Show loading message
-          console.log("selected file",selectedFile)
-          
-          
-         // Create a FormData object and append the PDF file to it
-          const formData = new FormData();
-          formData.append('pdfFile', selectedFile ); // 'pd
-          if (formData.has('pdfFile')) {
-            console.log('pdfFile is present in formData');
-          }
-        await  fetch('http://localhost:5000/uploadPDF', {
-            method: 'POST',
-            body: formData,
-          })
-        await  loadPDF(selectedFile,setUri,setPdf,setTotalPages,setPdfPages,setLoading,showLogin,setShowLogin)
+          setLoading(true); 
+          setIsFromBackend(false)// Show loading message
+        await  loadPDFAndRenderOnScreen(selectedFile,setUri,setPdf,setTotalPages,setPdfPages,setLoading,showLogin,setShowLogin)
       }
      } catch (error) {
-        console.error('Error loading PDF:', error);
         setLoading(false); // Hide loading message in case of error
-      }
-    
-
-   
-    
+      }   
   }
   load()
 }, [selectedFile]);
 
   const handleDownload =async()=>{
-
+     
    await downloadPDF(selectedPage,Toast,uri)
-
 }
-
-  
-
   const handleFileChange = (e) => {
-    setCurrentPage(1)
-    setPdf(null)
-    setPdfPages([])
-    setSelectedPage([])
+    // ensures previous settings dont mess with new uploads
+    setCurrentPage(1)   
+    setPdf(null)      
+    setPdfPages([])   
+    setSelectedPage([])  
     setTotalPages(0)
-    
+
     const file = e.target.files[0];
-    console.log("file",file)
     setSelectedFile(file);
     e.preventDefault()
   };
 
   
+async function handleUpload(){
+  setSelectedSavedPdf("")
+  if(!selectedFile){ Toast({title:"Select a file...",duration:3000,isClosable:true,status:"error"})
+return
+}
+  const formData = new FormData();
+  formData.append('pdfFile', selectedFile ); // 'pd
+  if (formData.has('pdfFile')) 
+  try{
+  
+const savePdf = await  fetch('http://localhost:5000/pdfModifier/api/v1/pdf', {
+    method: 'POST',
+    credentials:"include",
+    body: formData,
+  })
+if(savePdf.status==201){
+  Toast({title:"Successfully saved PDf",status:"success",duration:"3000",isClosable:true})
+  return
+}
+else{
+  Toast({title:"internal error while uploading",status:"error",duration:"3000",isClosable:true})
 
+}
+
+}
+catch(err){
+  Toast({title:"internal error while uploading",status:"error",duration:"3000",isClosable:true})
+  return
+}
+}
+
+// changes selected page
   const goToPage = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
     }
   };
-  console.log("totalPages: " + totalPages)
 
   return (
     <Center mt="40px"  h="100vh" display="flex" flexDirection="row" alignItems="center" justifyContent="space-around">
+      <Box h="10%"  position="absolute" left={0} top={0} justifyContent={"flex-start"}>
+      <DrawerExample selectedSavedPdf={selectedSavedPdf} setSelectedSavedPdf={setSelectedSavedPdf}/>
+      </Box>
       <Box w="30%"  p={4} borderWidth={1} borderRadius="md" boxShadow="md">
         <Center>
           <IconButton
@@ -147,6 +169,7 @@ await  loadPDF(pdfBlob,setUri,setPdf,setTotalPages,setPdfPages,setLoading,showLo
           mt={4}
           colorScheme="teal"
           isDisabled={!selectedFile}
+          onClick={()=>handleUpload()}
         >
           Upload
         </Button>
@@ -181,26 +204,9 @@ await  loadPDF(pdfBlob,setUri,setPdf,setTotalPages,setPdfPages,setLoading,showLo
           isChecked={isPageSelected(currentPage, selectedPage)}
           onChange={(e) => {
             // Create a new array with the updated value
-            const isChecked = e.target.checked
-            console.log("isClicked",isChecked,selectedPage)
-            let updatedSelectedPages
-            if(isChecked)  updatedSelectedPages = [...selectedPage, currentPage];
-            else{
-              console.log("index",selectedPage,currentPage)
-              let index = selectedPage.indexOf(currentPage)
-              console.log("index")
-              updatedSelectedPages = [...selectedPage]
-              updatedSelectedPages.splice(index, 1)
-              console.log(updatedSelectedPages,"selectedUpdatedPages")
-              console.log("isClicked",isChecked,selectedPage,currentPage,updatedSelectedPages)
-
-            }
-            console.log("updatedSelectedPages",updatedSelectedPages)
-            updatedSelectedPages = !updatedSelectedPages?.length?[]:updatedSelectedPages
-    
-    console.log(updatedSelectedPages);
-    setSelectedPage(updatedSelectedPages); // Update the state
-  }}
+            handleSelectedPages(e.target.checked,selectedPage,currentPage,setSelectedPage)
+           
+                }}
 >
 </Checkbox>
 </Box>
@@ -208,14 +214,22 @@ await  loadPDF(pdfBlob,setUri,setPdf,setTotalPages,setPdfPages,setLoading,showLo
         </Box>
       )}
       <Button display={selectedPage.length?"flex":"none"} onClick={handleDownload}>Download</Button>
-  <TransitionExample />
-    
+  <ShowLoginMessage navigate={navigate}/>
+  {loading&&<Spinner
+  position={"absolute"}
+  top="30%"
+  left="40%"
+  thickness='4px'
+  speed='0.65s'
+  emptyColor='gray.200'
+  color='blue.500'
+  size='xl'
+/> }
     </Center>
   );
 };
 
 function isPageSelected(currentPage,selectedPage){
-  console.log("selected page",selectedPage)
   if(!selectedPage) return false
   for(let x =0;x<selectedPage.length;x++){
     if(selectedPage[x]==currentPage)return true
@@ -223,45 +237,7 @@ function isPageSelected(currentPage,selectedPage){
   return false
 }
 
-function TransitionExample() {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const cancelRef = React.useRef()
 
-  return (
-    <>
-      <Button display={"none"} id="userExist" onClick={onOpen}>Discard</Button>
-      <AlertDialog
-        motionPreset='slideInBottom'
-        leastDestructiveRef={cancelRef}
-        onClose={onClose}
-        isOpen={isOpen}
-        isCentered
-      >
-        <AlertDialogOverlay />
-
-        <AlertDialogContent>
-          <AlertDialogHeader>Do you want to signIn</AlertDialogHeader>
-          <AlertDialogCloseButton />
-          <AlertDialogBody>
-           To save your pdf files you need to be logged in
-          </AlertDialogBody>
-          <AlertDialogFooter>
-            <Button ref={cancelRef}  onClick={()=>{
-               onClose()}}>
-              No
-            </Button>
-            <Button colorScheme='blue' ml={3}>
-              Login
-            </Button>
-            <Button colorScheme='green' ml={3}>
-              Register
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
-  )
-}
 export default PdfUploaderAndViewer;
 
 
