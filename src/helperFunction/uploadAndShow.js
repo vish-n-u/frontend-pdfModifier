@@ -2,11 +2,12 @@ import {GlobalWorkerOptions,getDocument,version} from 'pdfjs-dist';
 import { PDFDocument } from 'pdf-lib';
 const PDFJS = window.pdfjsLib;
 GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.js`;
-let user = JSON.parse(localStorage.getItem("user"))
+
 
 
 async function loadPDFAndRenderOnScreen (selectedFile,setUri,setPdf,setTotalPages,setPdfPages,setLoading,showLogin,) {
     try {
+      let user = JSON.parse(localStorage.getItem("user"))
       if (selectedFile) {
         setLoading(true); // Show loading message
        if(!user&&showLogin) {document.getElementById("userExist").click()

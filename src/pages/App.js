@@ -24,10 +24,11 @@ import { getSinglePdf, savePdf } from '../url';
 
 GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.js`;
 
-const user = JSON.parse(localStorage.getItem('user'))
+
 
 
 const PdfUploaderAndViewer = () => {
+  const user = JSON.parse(localStorage.getItem('user'))
   const [selectedFile, setSelectedFile] = useState(null);
   const [pdf, setPdf] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
