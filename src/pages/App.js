@@ -91,6 +91,7 @@ const PdfUploaderAndViewer = () => {
     setTotalPages(0)
 
     const file = e.target.files[0];
+    console.log("file: " + file,e.target)
     setSelectedFile(file);
     e.preventDefault()
   };
