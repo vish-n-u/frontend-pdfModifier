@@ -173,7 +173,7 @@ catch(err){
         <Button
           mt={4}
           colorScheme="teal"
-          isDisabled={!selectedFile||!user.email}
+          isDisabled={!selectedFile||!user?.email}
           onClick={()=>handleUpload()}
         >
           Upload
