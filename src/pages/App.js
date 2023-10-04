@@ -19,9 +19,12 @@ import loadPDFAndRenderOnScreen from '../helperFunction/uploadAndShow';
 import DrawerExample from '../components/drawer';
 import ShowLoginMessage from '../components/showLoginMsg';
 import handleSelectedPages from '../helperFunction/handleSelectedPages';
+import handleLogin from '../helperFunction/loginFunction';
+import { getSinglePdf, savePdf } from '../url';
 
 GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.js`;
 
+const user = JSON.parse(localStorage.getItem('user'))
 
 
 const PdfUploaderAndViewer = () => {
@@ -43,7 +46,7 @@ const PdfUploaderAndViewer = () => {
     
     if(!selectedSavedPdf)return 
     setLoading(true)
-    const data = await fetch("http://localhost:5000/pdfModifier/api/v1/pdf/"+selectedSavedPdf,{ 
+    const data = await fetch(getSinglePdf+selectedSavedPdf,{ 
       mode:"cors",
       credentials:"include",
     })
@@ -96,18 +99,20 @@ async function handleUpload(){
   if(!selectedFile){ Toast({title:"Select a file...",duration:3000,isClosable:true,status:"error"})
 return
 }
+
   const formData = new FormData();
   formData.append('pdfFile', selectedFile ); // 'pd
   if (formData.has('pdfFile')) 
   try{
   
-const savePdf = await  fetch('http://localhost:5000/pdfModifier/api/v1/pdf', {
+const savePdf = await  fetch(savePdf, {
     method: 'POST',
     credentials:"include",
     body: formData,
   })
 if(savePdf.status==201){
   Toast({title:"Successfully saved PDf",status:"success",duration:"3000",isClosable:true})
+  handleLogin("","",navigate,Toast)
   return
 }
 else{
@@ -168,7 +173,7 @@ catch(err){
         <Button
           mt={4}
           colorScheme="teal"
-          isDisabled={!selectedFile}
+          isDisabled={!selectedFile||!user.email}
           onClick={()=>handleUpload()}
         >
           Upload
