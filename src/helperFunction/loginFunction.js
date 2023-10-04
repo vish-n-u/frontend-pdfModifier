@@ -4,7 +4,7 @@ export default async function handleLogin(formData,setFormData,navigate,Toast){
   const user = JSON.parse(localStorage.getItem("user"))
     try{
    
-  
+  console.log("reached here")
         let loginUser = await fetch(loginUrl,{
             method: "POST",
             headers:{"Content-Type": "application/json",},

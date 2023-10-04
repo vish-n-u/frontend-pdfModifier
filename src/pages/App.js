@@ -105,12 +105,12 @@ return
   if (formData.has('pdfFile')) 
   try{
   
-const savePdf = await  fetch(savePdf, {
+const savedPdf = await  fetch(savePdf, {
     method: 'POST',
     credentials:"include",
     body: formData,
   })
-if(savePdf.status==201){
+if(savedPdf.status==201){
   Toast({title:"Successfully saved PDf",status:"success",duration:"3000",isClosable:true})
   handleLogin("","",navigate,Toast)
   return
