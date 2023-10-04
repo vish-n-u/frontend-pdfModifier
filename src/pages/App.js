@@ -28,7 +28,7 @@ GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${versi
 
 
 const PdfUploaderAndViewer = () => {
-  const user = JSON.parse(localStorage.getItem('user'))
+  let user = JSON.parse(localStorage.getItem('user'))
   const [selectedFile, setSelectedFile] = useState(null);
   const [pdf, setPdf] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
@@ -53,7 +53,8 @@ const PdfUploaderAndViewer = () => {
     })
     setSelectedFile("")
     setIsFromBackend(true) // set to true to ensure doesnt conflict with uploads
-    const pdfArrayBuffer = await data.arrayBuffer()    
+    const pdfArrayBuffer = await data.arrayBuffer()   
+    console.log("pdfArrayBuffer---", pdfArrayBuffer) 
     const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' })
       await  loadPDFAndRenderOnScreen(pdfBlob,setUri,setPdf,setTotalPages,setPdfPages,setLoading,showLogin,setShowLogin)
 
@@ -111,9 +112,16 @@ const savedPdf = await  fetch(savePdf, {
     credentials:"include",
     body: formData,
   })
+  console.log(savedPdf,"savedPdf")
+  const savedPdfData = await savedPdf.json()
+  
+  console.log(savedPdfData)
+ 
 if(savedPdf.status==201){
   Toast({title:"Successfully saved PDf",status:"success",duration:"3000",isClosable:true})
-  handleLogin("","",navigate,Toast)
+  localStorage.removeItem("user")
+  localStorage.setItem("user",JSON.stringify(savedPdfData.message))
+  user = savedPdfData.message
   return
 }
 else{
@@ -123,6 +131,7 @@ else{
 
 }
 catch(err){
+  console.log(err,"error uploading")
   Toast({title:"internal error while uploading",status:"error",duration:"3000",isClosable:true})
   return
 }

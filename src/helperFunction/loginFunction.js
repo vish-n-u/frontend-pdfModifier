@@ -11,8 +11,8 @@ export default async function handleLogin(formData,setFormData,navigate,Toast){
             mode:"cors",
             credentials: 'include',
             body: JSON.stringify({            
-                password:formData?.password||user.password,
-                email:formData?.email||user.email,             
+                password:user.password,
+                email:user.email,             
             })
         })
         let loginUserJson =await loginUser.json()
@@ -22,7 +22,8 @@ export default async function handleLogin(formData,setFormData,navigate,Toast){
                 return 
             }
             else{
-              setFormData({...formData,password:""})
+            //   setFormData({...formData,password:""})
+            console.log("")
               
         }
         if(loginUser.status==500){
@@ -32,7 +33,7 @@ export default async function handleLogin(formData,setFormData,navigate,Toast){
         }
         if(loginUser.status===200){
             // show toast
-            
+            localStorage.removeItem("user")
           localStorage.setItem("user",JSON.stringify(loginUserJson.message))
             navigate("/")
             return

@@ -13,11 +13,13 @@ async function loadPDFAndRenderOnScreen (selectedFile,setUri,setPdf,setTotalPage
        if(!user&&showLogin) {document.getElementById("userExist").click()
       }
        // Create a FormData object and append the PDF file to it
-       
+       console.log("selectedFile",selectedFile)
         const uri = await URL.createObjectURL(selectedFile)
+        console.log("uri",uri)
         setUri(uri)
         const pdfData = await PDFJS.getDocument({url:uri});
         const pdfDoc = await pdfData.promise.then((pdf) => pdf);
+        console.log("pdfData: " + pdfData,pdfDoc,"pdfDoc")
           setPdf(pdfDoc);
         // Get the total number of pages in the PDF
         setTotalPages(pdfDoc.numPages);
@@ -35,6 +37,7 @@ async function loadPDFAndRenderOnScreen (selectedFile,setUri,setPdf,setTotalPage
           loadedPages.push(canvas.toDataURL('image/png'));
         }
         setPdfPages(loadedPages);
+        console.log('loaded pages',loadedPages)
         setLoading(false); // Hide loading message
       }
     } catch (error) {
