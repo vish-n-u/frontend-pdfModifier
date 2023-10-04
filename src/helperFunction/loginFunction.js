@@ -11,8 +11,8 @@ export default async function handleLogin(formData,setFormData,navigate,Toast){
             mode:"cors",
             credentials: 'include',
             body: JSON.stringify({            
-                password:formData.password||user.password,
-                email:formData.email||user.email,             
+                password:formData?.password||user.password,
+                email:formData?.email||user.email,             
             })
         })
         let loginUserJson =await loginUser.json()
