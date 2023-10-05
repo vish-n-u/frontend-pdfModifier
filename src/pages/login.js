@@ -143,7 +143,9 @@ async function handleLogin(formData,setFormData,navigate,Toast){
             duration: 4000,
             isClosable: true,
           })
-        localStorage.setItem("user",JSON.stringify(loginUserJson.message))
+          const user = loginUserJson.message[0]
+          user.token = loginUserJson.message[1]
+        localStorage.setItem("user",JSON.stringify(user))
           navigate("/")
           return
       }

@@ -14,6 +14,7 @@ import {
     Input
   } from '@chakra-ui/react'
 const user = JSON.parse(localStorage.getItem('user'))
+
   function DrawerExample({selectedSavedPdf,setSelectedSavedPdf}) {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const btnRef = React.useRef()
@@ -36,7 +37,7 @@ const user = JSON.parse(localStorage.getItem('user'))
   
             <DrawerBody>
              {
-                user?.pdfs.length > 0?
+                user?.pdfs?.length > 0?
                 user?.pdfs.map((pdf)=>{
                     return <Button w="full" onClick={()=>{
                         if(selectedSavedPdf==pdf._id)setSelectedSavedPdf("")

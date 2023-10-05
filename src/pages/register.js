@@ -141,7 +141,9 @@ async function handleSubmits(formData,setFormData,navigate,Toast){
       }
       if(registerUser.status===201){
           // show toast
-          localStorage.setItem("user",JSON.stringify(registerUserJson.message))
+          const user = registerUserJson.message[0]
+          user.token = registerUserJson.message[1]
+        localStorage.setItem("user",JSON.stringify(user))
           Toast(  {
             title: 'Successfully registered',
             status: 'success',
