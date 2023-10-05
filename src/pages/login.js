@@ -95,7 +95,7 @@ async function handleLogin(formData,setFormData,navigate,Toast){
 
       let loginUser = await fetch(loginUrl,{
           method: "POST",
-          headers:{"Content-Type": "application/json",},
+          headers:{"Content-Type": "application/json"},
           mode:"cors",
           credentials: 'include',
           body: JSON.stringify({            
@@ -144,6 +144,8 @@ async function handleLogin(formData,setFormData,navigate,Toast){
             isClosable: true,
           })
         localStorage.setItem("user",JSON.stringify(loginUserJson.message))
+        const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
+        console.log(token,document.cookie,"--token---"); // This will log the value of the "token" cookie
           navigate("/")
           return
       }
