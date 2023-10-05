@@ -48,6 +48,7 @@ const PdfUploaderAndViewer = () => {
     if(!selectedSavedPdf)return 
     setLoading(true)
     const data = await fetch(getSinglePdf+selectedSavedPdf,{ 
+      headers:{ 'Authorization': `Bearer ${user.token}`},
       mode:"cors",
       credentials:"include",
     })
@@ -109,6 +110,8 @@ return
   try{
   
 const savedPdf = await  fetch(savePdf, {
+  headers:{ 'Authorization': `Bearer ${user.token}`},
+
     method: 'POST',
     credentials:"include",
     body: formData,
