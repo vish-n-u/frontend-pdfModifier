@@ -34,6 +34,7 @@ async function loadPDFAndRenderOnScreen (selectedFile,setUri,setPdf,setTotalPage
           canvas.width = viewport.width;
           canvas.height = viewport.height;
           await page.render({ canvasContext: context, viewport }).promise;
+          console.log("page",page,canvas)
           loadedPages.push(canvas.toDataURL('image/png'));
         }
         setPdfPages(loadedPages);

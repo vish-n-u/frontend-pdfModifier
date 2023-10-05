@@ -150,6 +150,7 @@ catch(err){
       <Box h="10%"  position="absolute" left={0} top={0} justifyContent={"flex-start"}>
       <DrawerExample selectedSavedPdf={selectedSavedPdf} setSelectedSavedPdf={setSelectedSavedPdf}/>
       </Box>
+      
       <Box w="30%"  p={4} borderWidth={1} borderRadius="md" boxShadow="md">
         <Center>
           <IconButton
@@ -195,7 +196,7 @@ catch(err){
 
       {pdfPages.length > 0 && !loading && (
         <Box display="flex" w="50%" alignItems="center" flexDirection="column">
-        <Text fontSize="xl" mb="4">Select The pages you want</Text>
+        <Text fontSize="xl" mb="4">Select The pages you want to download</Text>
         <Box  h="50%" w="40%" display="flex" flexDirection="column-reverse" alignItems="center" justifyContent={"center"}   > 
           <Box mt="5" display="flex" w="full" alignItems="center" justifyContent={"center"}>
             <Button mx="4" onClick={() => goToPage(currentPage - 1)}>Previous</Button>
