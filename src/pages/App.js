@@ -11,7 +11,6 @@ import {
 } from '@chakra-ui/react';
 import {  Button, Checkbox, Image,useToast } from '@chakra-ui/react'
 import { FaFilePdf } from 'react-icons/fa';
-import {GlobalWorkerOptions,version} from 'pdfjs-dist';
 import { useNavigate } from 'react-router-dom';
 
 import downloadPDF from '../helperFunction/downLoad';
@@ -21,9 +20,7 @@ import ShowLoginMessage from '../components/showLoginMsg';
 import handleSelectedPages from '../helperFunction/handleSelectedPages';
 import handleLogin from '../helperFunction/loginFunction';
 import { getSinglePdf, savePdf } from '../url';
-
-GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.js`;
-
+import { DownloadIcon } from '@chakra-ui/icons';
 
 
 
@@ -35,7 +32,7 @@ const PdfUploaderAndViewer = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [selectedPage, setSelectedPage] = useState([])
+  const [selectedPages, setSelectedPages] = useState([])
   const [uri,setUri] = useState('');
   const Toast = useToast()
   const [showLogin,setShowLogin] = useState(true)
@@ -54,6 +51,7 @@ const PdfUploaderAndViewer = () => {
     })
     setSelectedFile("")
     setIsFromBackend(true) // set to true to ensure doesnt conflict with uploads
+    setCurrentPage(1)
     const pdfArrayBuffer = await data.arrayBuffer()   
     console.log("pdfArrayBuffer---", pdfArrayBuffer) 
     const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' })
@@ -81,14 +79,14 @@ const PdfUploaderAndViewer = () => {
 
   const handleDownload =async()=>{
      
-   await downloadPDF(selectedPage,Toast,uri)
+   await downloadPDF(selectedPages,Toast,uri)
 }
   const handleFileChange = (e) => {
     // ensures previous settings dont mess with new uploads
     setCurrentPage(1)   
     setPdf(null)      
     setPdfPages([])   
-    setSelectedPage([])  
+    setSelectedPages([])  
     setTotalPages(0)
 
     const file = e.target.files[0];
@@ -107,6 +105,7 @@ return
   const formData = new FormData();
   formData.append('pdfFile', selectedFile ); // 'pd
   if (formData.has('pdfFile')) 
+  console.log(formData,"formData")
   try{
   
 const savedPdf = await  fetch(savePdf, {
@@ -123,8 +122,11 @@ const savedPdf = await  fetch(savePdf, {
  
 if(savedPdf.status==201){
   Toast({title:"Successfully saved PDf",status:"success",duration:"3000",isClosable:true})
+  const token = user.token
   localStorage.removeItem("user")
-  localStorage.setItem("user",JSON.stringify(savedPdfData.message))
+  const newUser = savedPdfData.message
+  newUser.token = token
+  localStorage.setItem("user",JSON.stringify(newUser))
   user = savedPdfData.message
   return
 }
@@ -149,12 +151,12 @@ catch(err){
   };
 
   return (
-    <Center mt="40px"  h="100vh" display="flex" flexDirection="row" alignItems="center" justifyContent="space-around">
+    <Center mt="40px"  h={{xl:"100vh",lg:"100vh",base:"auto"}} display="flex" flexDirection={{base:"column",lg:"row",xl:"row"}} alignItems="center" justifyContent="space-evenly">
       <Box h="10%"  position="absolute" left={0} top={0} justifyContent={"flex-start"}>
       <DrawerExample selectedSavedPdf={selectedSavedPdf} setSelectedSavedPdf={setSelectedSavedPdf}/>
       </Box>
       
-      <Box w="30%"  p={4} borderWidth={1} borderRadius="md" boxShadow="md">
+      <Box w={{base:"100vw",lg:"30%",xl:"30%"}}  p={4} borderWidth={1} borderRadius="md" boxShadow="md">
         <Center>
           <IconButton
             icon={<FaFilePdf />}
@@ -198,16 +200,14 @@ catch(err){
       {loading && <Text>Loading...</Text>}
 
       {pdfPages.length > 0 && !loading && (
-        <Box display="flex" w="50%" alignItems="center" flexDirection="column">
+        <Box display="flex" my={{base:"105px",lg:"0px",xl:"0px"}}  border={"1px"} borderColor={"gray.200"} h="70%" w={{base:"100vw",lg:"40%",xl:"40%"}}  alignItems="center" justifyContent={"center"} flexDirection="column">
         <Text fontSize="xl" mb="4">Select The pages you want to download</Text>
-        <Box  h="50%" w="40%" display="flex" flexDirection="column-reverse" alignItems="center" justifyContent={"center"}   > 
-          <Box mt="5" display="flex" w="full" alignItems="center" justifyContent={"center"}>
-            <Button mx="4" onClick={() => goToPage(currentPage - 1)}>Previous</Button>
-            Page {currentPage} of {totalPages}
-            <Button mx="4" onClick={() => goToPage(currentPage + 1)}>Next</Button>
-          </Box>
-          <Box maxW="350px" position="relative">
-          <Image maxW="300px"  h="80%" bgColor="red"
+      <Box w="full" justifyContent={"space-between"} alignItems={"center"} h="80%" display={"flex"} flexDirection={{base:"column",lg:"row",xl:"row"}}>
+        
+            <Button mx="4" my="8" onClick={() => goToPage(currentPage - 1)}>Previous</Button>
+            <Box display={"flex"} justifyContent={"center"}  alignItems={"center"} flexDirection={"column"}>
+            <Box  w={{base:"80%" , lg:"350px",xl:"350px"}} maxW={"350px"} justifyContent={"center"} alignItems={"center"} display={"flex"} position="relative">
+          <Image w={{base:"90%" , lg:"300px",xl:"300px"}} maxW={"350px"}   h="80%" bgColor="red"
             src={pdfPages[currentPage - 1]}
             alt={`Page ${currentPage}`}
             width="500"
@@ -218,22 +218,38 @@ catch(err){
           position="absolute"
           border="1px"
           borderColor="black"
-          top="4px" // Use a string with the unit (e.g., "10px")
-          right="3%"
+          top="4%" // Use a string with the unit (e.g., "10px")
+          right={{xl:"12%",lg:"12%",base:"2%"}}
+          bgColor={"white"}
           colorScheme='green'
-          isChecked={isPageSelected(currentPage, selectedPage)}
+          size={'lg'}
+          isChecked={isPageSelected(currentPage, selectedPages)}
           onChange={(e) => {
             // Create a new array with the updated value
-            handleSelectedPages(e.target.checked,selectedPage,currentPage,setSelectedPage)
+            handleSelectedPages(e.target.checked,selectedPages,currentPage,setSelectedPages)
            
                 }}
 >
 </Checkbox>
 </Box>
+<Box mt="5" display="flex" w="full" alignItems="center" justifyContent={"center"}>
+            <label htmlFor="pageNumber" style={{fontSize:"18px",fontWeight:"bold",marginRight:"15px"}}>{"Page number:    "}</label>      <select my="8" mx="5"  style={{fontSize:"18px",fontWeight:"bold",border:"1px solid black",borderColor:"black",padding:"6px"}} onChange={(e)=>setCurrentPage(Number(e.target.value))} value={currentPage} id="pageNumber">
+ {
+  pdfPages.map((page,i)=><option key={i}  value={i+1}>{i+1}</option>)
+ }
+</select>  
+</Box>
+            
+           
+       
+        
+          
+</Box>
+<Button mx="4" my="5" paddingX={"8"} onClick={() => goToPage(currentPage + 1)}>Next</Button>
         </Box>
         </Box>
       )}
-      <Button display={selectedPage.length?"flex":"none"} onClick={handleDownload}>Download</Button>
+      <Button display={selectedPages.length?"flex":"none"} maxW={"170px"} bgColor={"blue.400"} w={"50%"} h="50px" onClick={handleDownload}><DownloadIcon borderRadius={"full"} border={1} boxSize={6}></DownloadIcon>Download</Button>
   <ShowLoginMessage navigate={navigate}/>
   {loading&&<Spinner
   position={"absolute"}
@@ -249,10 +265,10 @@ catch(err){
   );
 };
 
-function isPageSelected(currentPage,selectedPage){
-  if(!selectedPage) return false
-  for(let x =0;x<selectedPage.length;x++){
-    if(selectedPage[x]==currentPage)return true
+function isPageSelected(currentPage,selectedPages){
+  if(!selectedPages) return false
+  for(let x =0;x<selectedPages.length;x++){
+    if(selectedPages[x]==currentPage)return true
   }
   return false
 }

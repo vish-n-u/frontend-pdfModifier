@@ -21,10 +21,10 @@ const user = JSON.parse(localStorage.getItem('user'))
   
     return (
       <>
-        <Button ref={btnRef} colorScheme='teal' onClick={onOpen}>
+      {user?.email&&  <Button ref={btnRef} colorScheme='teal' onClick={onOpen}>
           History
         </Button>
-        <Drawer
+       } <Drawer
           isOpen={isOpen}
           placement='left'
           onClose={onClose}

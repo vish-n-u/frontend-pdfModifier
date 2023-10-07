@@ -147,6 +147,7 @@ async function handleLogin(formData,setFormData,navigate,Toast){
           user.token = loginUserJson.message[1]
         localStorage.setItem("user",JSON.stringify(user))
           navigate("/")
+          window.location.reload()
           return
       }
 

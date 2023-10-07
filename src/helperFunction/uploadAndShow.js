@@ -1,9 +1,6 @@
 import {GlobalWorkerOptions,getDocument,version} from 'pdfjs-dist';
-import { PDFDocument } from 'pdf-lib';
 const PDFJS = window.pdfjsLib;
 GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.js`;
-
-
 
 async function loadPDFAndRenderOnScreen (selectedFile,setUri,setPdf,setTotalPages,setPdfPages,setLoading,showLogin,) {
     try {

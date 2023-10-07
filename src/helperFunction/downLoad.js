@@ -1,12 +1,9 @@
-import {GlobalWorkerOptions,getDocument,version} from 'pdfjs-dist';
-import { Checkbox, CheckboxGroup,Image,useToast } from '@chakra-ui/react'
 import { PDFDocument } from 'pdf-lib';
-const PDFJS = window.pdfjsLib;
-GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.js`;
 let user = JSON.parse(localStorage.getItem("user"))
 
 
 async function downloadPDF(selectedPage,Toast,uri){
+  console.log("called Download`")
     try {
       if(!selectedPage.length) {Toast(  {
         title: 'Please Select a page.',
