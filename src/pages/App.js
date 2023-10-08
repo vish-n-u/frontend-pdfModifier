@@ -210,7 +210,7 @@ catch(err){
             <Button mx="4" my="8" onClick={() => goToPage(currentPage - 1)}>Previous</Button>
             <Box display={"flex"} justifyContent={"center"}  alignItems={"center"} flexDirection={"column"}>
             <Box  w={{base:"80%" , lg:"350px",xl:"350px"}} maxW={"350px"} justifyContent={"center"} alignItems={"center"} display={"flex"} position="relative">
-          <Image w={{base:"90%" , lg:"300px",xl:"300px"}} maxW={"350px"}   h="80%" bgColor="red"
+          <Image w={{base:"90%" , lg:"300px",xl:"300px"}} maxW={"350px"}   h="80%" bgColor="red" my="9px"
             src={pdfPages[currentPage - 1]}
             alt={`Page ${currentPage}`}
             width="500"
