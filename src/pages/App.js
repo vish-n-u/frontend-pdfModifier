@@ -203,8 +203,8 @@ catch(err){
       {loading && <Text>Loading...</Text>}
 
       {pdfPages.length > 0 && !loading && (
-        <Box display="flex" my={{base:"105px",lg:"0px",xl:"0px"}}  border={"1px"} borderColor={"gray.200"} h="70%" w={{base:"100vw",lg:"40%",xl:"40%"}}  alignItems="center" justifyContent={"center"} flexDirection="column">
-        <Text fontSize="xl" mb="4">Select The pages you want to download</Text>
+        <Box display="flex" my={{base:"105px",lg:"0px",xl:"0px"}}  border={"1px"} borderColor={"gray.200"} h="70%" w={{base:"100vw",lg:"40%",xl:"40%"}}  alignItems="center" justifyContent={"space-around"} flexDirection="column">
+        <Text fontSize="xl" mb="8">Select The pages you want to download</Text>
       <Box w="full" justifyContent={"space-between"} alignItems={"center"} h="80%" display={"flex"} flexDirection={{base:"column",lg:"row",xl:"row"}}>
         
             <Button mx="4" my="8" onClick={() => goToPage(currentPage - 1)}>Previous</Button>
