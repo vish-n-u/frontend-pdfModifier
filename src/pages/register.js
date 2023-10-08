@@ -151,6 +151,7 @@ async function handleSubmits(formData,setFormData,navigate,Toast){
             isClosable: true,
           })
           navigate("/")
+          window.location.reload()
           return
       }
 

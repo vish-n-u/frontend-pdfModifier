@@ -22,7 +22,7 @@ const user = JSON.parse(localStorage.getItem('user'))
     return (
       <>
       {user?.email&&  <Button ref={btnRef} colorScheme='teal' onClick={onOpen}>
-          History
+          Saved Pdfs
         </Button>
        } <Drawer
           isOpen={isOpen}
