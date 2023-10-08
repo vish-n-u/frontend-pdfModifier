@@ -155,8 +155,14 @@ catch(err){
 
   return (
     <Center mt="40px"  h={{xl:"100vh",lg:"100vh",base:"auto"}} display="flex" flexDirection={{base:"column",lg:"row",xl:"row"}} alignItems="center" justifyContent="space-evenly">
-      <Box h="10%"  position="absolute" left={0} top={0} justifyContent={"flex-start"}>
+      <Box h="10%" w="100%" display={{base:"flex",lg:"",xl:""}} position={{base:"",lg:"absolute",xl:"absolute"}} top={10} left={0} justifyContent={"flex-start"} >
+      <Box minW="40%">
       <DrawerExample selectedSavedPdf={selectedSavedPdf} setSelectedSavedPdf={setSelectedSavedPdf}/>
+      </Box>
+      <Box fontWeight={'semibold'} display={"flex"}  w="50%" fontSize={"xl"} justifyContent={"flex-start"} >
+      <Text  >PDF Page Picker</Text>
+      </Box>
+     
       </Box>
       
       <Box w={{base:"100vw",lg:"30%",xl:"30%"}} maxW="600px" p={4} borderWidth={1} borderRadius="md" boxShadow="md">
