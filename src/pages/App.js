@@ -67,7 +67,13 @@ const PdfUploaderAndViewer = () => {
       try {
         if (selectedFile) {
           setLoading(true); 
-          setIsFromBackend(false)// Show loading message
+          setIsFromBackend(false)
+          // Show loading message
+          setCurrentPage(1)   
+          setPdf(null)      
+          setPdfPages([])   
+          setSelectedPages([])  
+          setTotalPages(0)
         await  loadPDFAndRenderOnScreen(selectedFile,setUri,setPdf,setTotalPages,setPdfPages,setLoading,showLogin,setShowLogin)
       }
      } catch (error) {
