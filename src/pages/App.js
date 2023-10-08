@@ -52,6 +52,10 @@ const PdfUploaderAndViewer = () => {
     setSelectedFile("")
     setIsFromBackend(true) // set to true to ensure doesnt conflict with uploads
     setCurrentPage(1)
+    setPdf(null)      
+    setPdfPages([])   
+    setSelectedPages([])  
+    setTotalPages(0)
     const pdfArrayBuffer = await data.arrayBuffer()   
     console.log("pdfArrayBuffer---", pdfArrayBuffer) 
     const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' })
@@ -69,11 +73,7 @@ const PdfUploaderAndViewer = () => {
           setLoading(true); 
           setIsFromBackend(false)
           // Show loading message
-          setCurrentPage(1)   
-          setPdf(null)      
-          setPdfPages([])   
-          setSelectedPages([])  
-          setTotalPages(0)
+         
         await  loadPDFAndRenderOnScreen(selectedFile,setUri,setPdf,setTotalPages,setPdfPages,setLoading,showLogin,setShowLogin)
       }
      } catch (error) {
@@ -166,8 +166,22 @@ catch(err){
       <Box minW="40%">
       <DrawerExample selectedSavedPdf={selectedSavedPdf} setSelectedSavedPdf={setSelectedSavedPdf}/>
       </Box>
-      <Box fontWeight={'semibold'} display={"flex"}  w="50%" fontSize={"2xl"} justifyContent={"flex-start"} >
+      <Box fontWeight={'semibold'} h="full" position={"relative"} display={"flex"}  w="50%" fontSize={"2xl"} justifyContent={"space-between"} >
       <Text  >PDF Page Picker</Text>
+      {user?<Button onClick={()=>{
+        localStorage.removeItem("user")
+        window.location.reload()
+      }} position={"absolute"} top={-10} right={-5}>Logout</Button>:
+      <Box  position={"absolute"} top={-10} right={-5}>
+      <Button colorScheme={"green"} onClick={()=>{
+        navigate("/register")
+      }}>Register</Button>
+      <Button mx={3} colorScheme={"blue"} onClick={()=>{
+        navigate("/login")
+       
+      }} >Login</Button>
+      </Box>
+      }
       </Box>
      
       </Box>

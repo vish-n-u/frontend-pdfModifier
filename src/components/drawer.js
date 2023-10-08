@@ -33,18 +33,18 @@ const user = JSON.parse(localStorage.getItem('user'))
           <DrawerOverlay />
           <DrawerContent>
             <DrawerCloseButton />
-            <DrawerHeader>Create your account</DrawerHeader>
+            <DrawerHeader>Your saved pdfs.</DrawerHeader>
   
             <DrawerBody>
              {
-                user?.pdfs?.reverse().length > 0?
+               user?.pdfs?.length > 0?
                 user?.pdfs.map((pdf)=>{
                     return <Button w="full" onClick={()=>{
                         if(selectedSavedPdf==pdf._id)setSelectedSavedPdf("")
                        else setSelectedSavedPdf(pdf._id)}} overflowX={"clip"}  fontSize={"sm"} my={4} fontWeight={'semibold'} key={pdf._id}>{pdf.fileName}</Button>;
 
                 })
-                :<Text>You've not yet created anything</Text>
+                :<Text>You've not yet Saved any pdfs</Text>
              }
             </DrawerBody>
   
@@ -52,7 +52,6 @@ const user = JSON.parse(localStorage.getItem('user'))
               <Button variant='outline' mr={3} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme='blue'>Save</Button>
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
