@@ -131,6 +131,7 @@ if(savedPdf.status==201){
   newUser.token = token
   localStorage.setItem("user",JSON.stringify(newUser))
   user = savedPdfData.message
+  window.location.reload()
   return
 }
 else{
@@ -155,11 +156,11 @@ catch(err){
 
   return (
     <Center mt="40px"  h={{xl:"100vh",lg:"100vh",base:"auto"}} display="flex" flexDirection={{base:"column",lg:"row",xl:"row"}} alignItems="center" justifyContent="space-evenly">
-      <Box h="10%" w="100%" display={{base:"flex",lg:"",xl:""}} position={{base:"",lg:"absolute",xl:"absolute"}} top={10} left={0} justifyContent={"flex-start"} >
+      <Box h="10%" w="100%" display={{base:"flex",lg:"",xl:""}} position={{base:"",lg:"absolute",xl:"absolute"}} top={10} left={0} mb={10} justifyContent={"flex-start"} >
       <Box minW="40%">
       <DrawerExample selectedSavedPdf={selectedSavedPdf} setSelectedSavedPdf={setSelectedSavedPdf}/>
       </Box>
-      <Box fontWeight={'semibold'} display={"flex"}  w="50%" fontSize={"xl"} justifyContent={"flex-start"} >
+      <Box fontWeight={'semibold'} display={"flex"}  w="50%" fontSize={"2xl"} justifyContent={"flex-start"} >
       <Text  >PDF Page Picker</Text>
       </Box>
      
