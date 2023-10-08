@@ -97,7 +97,6 @@ async function handleLogin(formData,setFormData,navigate,Toast){
           method: "POST",
           headers:{"Content-Type": "application/json"},
           mode:"cors",
-          credentials: 'include',
           body: JSON.stringify({            
               password:formData.password,
               email:formData.email,             
