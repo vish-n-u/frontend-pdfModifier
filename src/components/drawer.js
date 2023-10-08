@@ -37,11 +37,11 @@ const user = JSON.parse(localStorage.getItem('user'))
   
             <DrawerBody>
              {
-                user?.pdfs?.length > 0?
+                user?.pdfs?.reverse().length > 0?
                 user?.pdfs.map((pdf)=>{
                     return <Button w="full" onClick={()=>{
                         if(selectedSavedPdf==pdf._id)setSelectedSavedPdf("")
-                       else setSelectedSavedPdf(pdf._id)}} overflowX={"clip"}  fontSize={"sm"} my={4} fontWeight={'semibold'} key={pdf._id}>{new Date(pdf.createdAt).toString()}</Button>;
+                       else setSelectedSavedPdf(pdf._id)}} overflowX={"clip"}  fontSize={"sm"} my={4} fontWeight={'semibold'} key={pdf._id}>{pdf.fileName}</Button>;
 
                 })
                 :<Text>You've not yet created anything</Text>

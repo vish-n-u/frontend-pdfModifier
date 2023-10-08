@@ -101,7 +101,10 @@ async function handleUpload(){
   if(!selectedFile){ Toast({title:"Select a file...",duration:3000,isClosable:true,status:"error"})
 return
 }
-
+if(selectedFile.size>5000000){
+  Toast({title:"File Size too large",description:"Seems that the file size is larger than 5Mb , it wont be stored",duration:3000,isClosable:true,status:"warning"})
+return
+}
   const formData = new FormData();
   formData.append('pdfFile', selectedFile ); // 'pd
   if (formData.has('pdfFile')) 
@@ -156,7 +159,7 @@ catch(err){
       <DrawerExample selectedSavedPdf={selectedSavedPdf} setSelectedSavedPdf={setSelectedSavedPdf}/>
       </Box>
       
-      <Box w={{base:"100vw",lg:"30%",xl:"30%"}}  p={4} borderWidth={1} borderRadius="md" boxShadow="md">
+      <Box w={{base:"100vw",lg:"30%",xl:"30%"}} maxW="600px" p={4} borderWidth={1} borderRadius="md" boxShadow="md">
         <Center>
           <IconButton
             icon={<FaFilePdf />}
@@ -189,7 +192,7 @@ catch(err){
         </Flex>
         <Button
           mt={4}
-          colorScheme="teal"
+          colorScheme="blue"
           isDisabled={!selectedFile||!user?.email}
           onClick={()=>handleUpload()}
         >
